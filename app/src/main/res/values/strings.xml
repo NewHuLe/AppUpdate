@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">App Update</string>
+    <string name="updateTip">检查更新</string>
+</resources>

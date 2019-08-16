@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="@string/down_loading"
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
+
+
+    <com.open.hule.library.view.NumberProgressBar
+        android:id="@+id/nbpProgress"
+        style="@style/NumberProgressBar_Default"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        app:progress_current="0"
+
+        app:progress_max="100"
+        app:progress_reached_bar_height="3dp"
+
+        app:progress_reached_color="#3498DB"
+        app:progress_text_color="#3498DB"
+
+        app:progress_text_offset="1dp"
+        app:progress_text_size="16sp"
+        app:progress_text_visibility="visible"
+
+        app:progress_unreached_bar_height="1.5dp"
+        app:progress_unreached_color="#CCCCCC" />
+
+    <Button
+        android:id="@+id/btnCancel"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:text="@string/down_cancel"
+        android:textColor="@color/color_blue"
+        android:textSize="12sp" />
+
+</LinearLayout>

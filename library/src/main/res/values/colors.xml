@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--app下载更新-->
+    <color name="progressColor">#3F51B5</color>
+    <color name="updateColor">#FF4081</color>
+    <color name="color_blue">#4F97EF</color>
+</resources>
