@@ -13,6 +13,7 @@
 - 支持强制更新，未更新无法使用应用
 - 支持MD5文件防篡改及完整性校验
 - 支持自定义更新提示界面
+- 下载失败支持通过系统浏览器下载
 ## 效果图
 ![](https://github.com/NewHuLe/AppUpdate/blob/master/screenshots/%E6%88%AA%E5%9B%BE1.jpg)
 ![](https://github.com/NewHuLe/AppUpdate/blob/master/screenshots/%E6%88%AA%E5%9B%BE2.jpg)
