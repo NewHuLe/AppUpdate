@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements MainPageExtraList
                 .newVersionUrl("https://imtt.dd.qq.com/16891/8EC4E86B648D57FDF114AF5D3002C09B.apk")
                 // 版本号
                 .newVersionCode("v1.2")
+                // 通过传入资源id来自定义更新对话框，注意取消更新的id要定义为btnUpdateLater，立即更新的id要定义为btnUpdateNow
+                .updateResourceId(R.layout.dialog_update)
                 // 文件大小
                 .fileSize("5.8M")
                 //是否采取默认模式（只显示更新提示，后台下载完自动弹出安装界面），否则，显示下载进度，显示下载失败弹框
@@ -75,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements MainPageExtraList
         System.exit(0);
     }
 
+    /**
+     * 检测到无权限安装未知来源应用，回调接口中需要重新请求安装未知应用来源的权限
+     */
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void applyAndroidOInstall() {
