@@ -17,14 +17,88 @@
 ![](https://github.com/NewHuLe/AppUpdate/blob/master/screenshots/%E6%88%AA%E5%9B%BE3.jpg)
 ## 关于使用
 - 工程build.gradle目录添加
+```
 	allprojects {
 		repositories {
 			...
 			maven { url 'https://www.jitpack.io' }
 		}
 	}
+```
 - 项目build.gradle文件添加
-  dependencies {
-	        implementation 'com.github.NewHuLe:AppUpdate:Tag'
+```
+ 	dependencies {
+	       implementation 'com.github.NewHuLe:AppUpdate:v1.0'
 	}
-- 
+```
+- 代码调用示例
+```
+AppUpdateUtils updateUtils = new AppUpdateUtils(MainActivity.this);
+        AppUpdate appUpdate = new AppUpdate.Builder()
+                //更新地址
+                .newVersionUrl("https://imtt.dd.qq.com/16891/8EC4E86B648D57FDF114AF5D3002C09B.apk")
+                // 版本号
+                .newVersionCode("v1.2")
+                // 文件大小
+                .fileSize("5.8M")
+                //是否采取默认模式（只显示更新提示，后台下载完自动弹出安装界面），否则，显示下载进度，显示下载失败弹框
+                .defaultMode(0)
+                //默认不采取强制更新，否则，不更新无法使用
+                .forceUpdate(0)
+                .build();
+        updateUtils.startUpdate(appUpdate, this);
+```
+- 下载完成后，默认安装已经发出允许安装未知来源应用权限申请，如果拒绝权限，需要在更新页面增加权限拒绝后的回调处理，详情可见demo
+```
+ /**
+     * 检测到无权限安装未知来源应用，回调接口中需要重新请求安装未知应用来源的权限
+     */
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public void applyAndroidOInstall() {
+        //请求安装未知应用来源的权限
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.REQUEST_INSTALL_PACKAGES}, INSTALL_PACKAGES_REQUESTCODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // 8.0的权限请求结果回调
+        if (requestCode == INSTALL_PACKAGES_REQUESTCODE) {
+            // 授权成功
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                installApkAgain();
+            } else {
+                // 授权失败，引导用户去未知应用安装的界面
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    //注意这个是8.0新API
+                    Uri packageUri = Uri.parse("package:" + getPackageName());
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageUri);
+                    startActivityForResult(intent, GET_UNKNOWN_APP_SOURCES);
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //8.0应用设置界面未知安装开源返回时候
+        if (requestCode == GET_UNKNOWN_APP_SOURCES) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                boolean allowInstall = getPackageManager().canRequestPackageInstalls();
+                if (allowInstall) {
+                    installApkAgain();
+                } else {
+                    Toast.makeText(MainActivity.this, "您拒绝了安装未知来源应用，应用暂时无法更新！", Toast.LENGTH_SHORT).show();
+                    if (0 != updateUtils.getAppUpdate().getForceUpdate()) {
+                        forceExit();
+                    }
+                }
+            }
+        }
+    }
+```
+## 更新日志
+- v1.0
+初次提交
