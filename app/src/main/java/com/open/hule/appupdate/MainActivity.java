@@ -54,11 +54,16 @@ public class MainActivity extends AppCompatActivity implements MainPageExtraList
     private void checkUpdate() {
         updateUtils = new AppUpdateUtils(MainActivity.this);
         AppUpdate appUpdate = new AppUpdate.Builder()
+                //更新地址
                 .newVersionUrl("https://imtt.dd.qq.com/16891/8EC4E86B648D57FDF114AF5D3002C09B.apk")
+                // 版本号
                 .newVersionCode("v1.2")
+                // 文件大小
                 .fileSize("5.8M")
-                .defaultMode(1)
-                .forceUpdate(1)
+                //是否采取默认模式（只显示更新提示，后台下载完自动弹出安装界面），否则，显示下载进度，显示下载失败弹框
+                .defaultMode(0)
+                //默认不采取强制更新，否则，不更新无法使用
+                .forceUpdate(0)
                 .build();
         updateUtils.startUpdate(appUpdate, this);
     }
@@ -117,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements MainPageExtraList
     }
 
     private void installApkAgain() {
-        if(updateUtils !=null){
+        if (updateUtils != null) {
             updateUtils.installAppAgain();
         }
     }
