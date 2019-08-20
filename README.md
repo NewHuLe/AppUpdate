@@ -10,3 +10,7 @@
 - 支持MD5文件防篡改及完整性校验
 - 支持自定义更新提示界面
 ## 效果图
+![](https://github.com/NewHuLe/AppUpdate/blob/master/screenshots/%E6%88%AA%E5%9B%BE1.jpg)
+![](https://github.com/NewHuLe/AppUpdate/blob/master/screenshots/%E6%88%AA%E5%9B%BE2.jpg)
+![](https://github.com/NewHuLe/AppUpdate/blob/master/screenshots/%E6%88%AA%E5%9B%BE3.jpg)
+## 关于使用
