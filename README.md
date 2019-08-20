@@ -95,7 +95,7 @@
         }
     }
 ```
-- 更高级用法：
+- 更高级调用写法：
 ```
  AppUpdateUtils updateUtils = new AppUpdateUtils(MainActivity.this);
         AppUpdate appUpdate = new AppUpdate.Builder()
