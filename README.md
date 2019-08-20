@@ -1,5 +1,7 @@
 ## Android版本更新
 [![](https://www.jitpack.io/v/NewHuLe/AppUpdate.svg)](https://www.jitpack.io/#NewHuLe/AppUpdate)  
+[![](https://github.com/NewHuLe/AppUpdate//tree/master/author/author_jianshu.svg)](https://www.jianshu.com/u/e87d858e89a4)
+[![](https://github.com/NewHuLe/AppUpdate/tree/master/author/author_juejin.svg)](https://juejin.im/user/5823e16c5bbb50005907fdb2/posts) 
 
 原生DownloadManager实现版本的检测更新，自由控制下载进度、下载失败弹框、是否强制更新、是否MD5校验、完美适配Android M/N/O/P/Q
 ## 功能介绍
