@@ -31,9 +31,9 @@
 	       implementation 'com.github.NewHuLe:AppUpdate:v1.0'
 	}
 ```
-- 代码调用示例
+- 代码调用示例，简单写法，更多配置参考demo
 ```
-AppUpdateUtils updateUtils = new AppUpdateUtils(MainActivity.this);
+ AppUpdateUtils updateUtils = new AppUpdateUtils(MainActivity.this);
         AppUpdate appUpdate = new AppUpdate.Builder()
                 //更新地址
                 .newVersionUrl("https://imtt.dd.qq.com/16891/8EC4E86B648D57FDF114AF5D3002C09B.apk")
@@ -41,10 +41,6 @@ AppUpdateUtils updateUtils = new AppUpdateUtils(MainActivity.this);
                 .newVersionCode("v1.2")
                 // 文件大小
                 .fileSize("5.8M")
-                //是否采取默认模式（只显示更新提示，后台下载完自动弹出安装界面），否则，显示下载进度，显示下载失败弹框
-                .defaultMode(0)
-                //默认不采取强制更新，否则，不更新无法使用
-                .forceUpdate(0)
                 .build();
         updateUtils.startUpdate(appUpdate, this);
 ```
@@ -98,6 +94,25 @@ AppUpdateUtils updateUtils = new AppUpdateUtils(MainActivity.this);
             }
         }
     }
+```
+- 更高级用法：
+```
+ AppUpdateUtils updateUtils = new AppUpdateUtils(MainActivity.this);
+        AppUpdate appUpdate = new AppUpdate.Builder()
+                //更新地址
+                .newVersionUrl("https://imtt.dd.qq.com/16891/8EC4E86B648D57FDF114AF5D3002C09B.apk")
+                // 版本号
+                .newVersionCode("v1.2")
+                // 通过传入资源id来自定义更新对话框，注意取消更新的id要定义为btnUpdateLater，立即更新的id要定义为btnUpdateNow
+                .updateResourceId(R.layout.dialog_update)
+                // 文件大小
+                .fileSize("5.8M")
+                //是否采取默认模式（只显示更新提示，后台下载完自动弹出安装界面），否则，显示下载进度，显示下载失败弹框
+                .defaultMode(0)
+                //默认不采取强制更新，否则，不更新无法使用
+                .forceUpdate(0)
+                .build();
+        updateUtils.startUpdate(appUpdate, this);
 ```
 ## 更新日志
 - v1.0
