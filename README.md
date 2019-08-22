@@ -117,6 +117,10 @@
                 .build();
         updateUtils.startUpdate(appUpdate, this);
 ```
+## 混淆配置
+```
+-keep class com.open.hule.library.entity.** { *; }
+```
 ## 更新日志
 - v1.0
 初次提交
