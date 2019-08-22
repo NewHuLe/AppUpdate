@@ -1,7 +1,7 @@
 ## Android版本更新
-[![](https://www.jitpack.io/v/NewHuLe/AppUpdate.svg)](https://www.jitpack.io/#NewHuLe/AppUpdate)  
-[![](https://github.com/NewHuLe/AppUpdate//tree/master/author/author_jianshu.svg)](https://www.jianshu.com/u/e87d858e89a4)
-[![](https://github.com/NewHuLe/AppUpdate/tree/master/author/author_juejin.svg)](https://juejin.im/user/5823e16c5bbb50005907fdb2/posts) 
+[![](https://www.jitpack.io/v/NewHuLe/AppUpdate.svg)](https://www.jitpack.io/#NewHuLe/AppUpdate)
+[![](https://github.com/NewHuLe/AppUpdate/blob/master/author/author_jianshu.svg)](https://www.jianshu.com/u/e87d858e89a4)
+[![](https://github.com/NewHuLe/AppUpdate/blob/master/author/author_juejin.svg)](https://juejin.im/user/5823e16c5bbb50005907fdb2/posts) 
 
 原生DownloadManager实现版本的检测更新，自由控制下载进度、下载失败弹框、是否强制更新、是否MD5校验、完美适配Android M/N/O/P/Q
 ## 功能介绍
@@ -13,6 +13,7 @@
 - 支持强制更新，未更新无法使用应用
 - 支持MD5文件防篡改及完整性校验
 - 支持自定义更新提示界面
+- 下载失败支持通过系统浏览器下载
 ## 效果图
 ![](https://github.com/NewHuLe/AppUpdate/blob/master/screenshots/%E6%88%AA%E5%9B%BE1.jpg)
 ![](https://github.com/NewHuLe/AppUpdate/blob/master/screenshots/%E6%88%AA%E5%9B%BE2.jpg)
@@ -115,6 +116,10 @@
                 .forceUpdate(0)
                 .build();
         updateUtils.startUpdate(appUpdate, this);
+```
+## 混淆配置
+```
+-keep class com.open.hule.library.entity.** { *; }
 ```
 ## 更新日志
 - v1.0
