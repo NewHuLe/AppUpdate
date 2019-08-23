@@ -1,6 +1,7 @@
 package com.open.hule.library.view;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -57,8 +58,13 @@ public class UpdateFailureDialog extends BaseDialog {
         super.onViewCreated(view, savedInstanceState);
         TextView version = view.findViewById(R.id.version);
         if (getArguments() != null) {
-            version.setVisibility(View.VISIBLE);
-            version.setText(String.format(getResources().getString(R.string.down_version), getArguments().getString("newVersionCode")));
+            String newVersionCode = getArguments().getString("newVersionCode");
+            if (TextUtils.isEmpty(newVersionCode)) {
+                version.setVisibility(View.GONE);
+            } else {
+                version.setVisibility(View.VISIBLE);
+                version.setText(String.format(getResources().getString(R.string.down_version), getArguments().getString("newVersionCode")));
+            }
         } else {
             version.setVisibility(View.GONE);
         }

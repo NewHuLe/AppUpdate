@@ -100,10 +100,20 @@ public class UpdateRemindDialog extends BaseDialog {
             TextView tvContentTips = view.findViewById(R.id.tvContentTips);
             // 跟新的内容
             TextView tvContent = view.findViewById(R.id.tvContent);
-
+            // 更新的标题
             tvTitle.setText(appUpdate.getUpdateTitle());
-            tvVersion.setText(String.format(getResources().getString(R.string.update_version), appUpdate.getNewVersionCode()));
-            tvFileSize.setText(String.format(getResources().getString(R.string.update_size), appUpdate.getFileSize()));
+            if (TextUtils.isEmpty(appUpdate.getNewVersionCode())) {
+                tvVersion.setVisibility(View.GONE);
+            } else {
+                tvVersion.setVisibility(View.VISIBLE);
+                tvVersion.setText(String.format(getResources().getString(R.string.update_version), appUpdate.getNewVersionCode()));
+            }
+            if(TextUtils.isEmpty(appUpdate.getFileSize())){
+                tvFileSize.setVisibility(View.GONE);
+            }else {
+                tvFileSize.setVisibility(View.VISIBLE);
+                tvFileSize.setText(String.format(getResources().getString(R.string.update_size), appUpdate.getFileSize()));
+            }
             tvContentTips.setText(appUpdate.getUpdateContentTitle());
             tvContent.setText(TextUtils.isEmpty(appUpdate.getUpdateInfo()) ? getResources().getString(R.string.default_update_content) : appUpdate.getUpdateInfo());
             tvContent.setMovementMethod(new ScrollingMovementMethod());
