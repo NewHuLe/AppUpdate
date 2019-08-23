@@ -32,18 +32,18 @@
 - 项目build.gradle文件添加
 ```
  	dependencies {
-	       implementation 'com.github.NewHuLe:AppUpdate:v1.0'
+	       implementation 'com.github.NewHuLe:AppUpdate:v1.1'
 	}
 ```
 - 代码调用示例，简单写法，更多配置参考demo
 ```
  AppUpdateUtils updateUtils = new AppUpdateUtils(MainActivity.this);
         AppUpdate appUpdate = new AppUpdate.Builder()
-                //更新地址
+                //更新地址（必须）
                 .newVersionUrl("https://imtt.dd.qq.com/16891/8EC4E86B648D57FDF114AF5D3002C09B.apk")
-                // 版本号
+                // 版本号（非必须）
                 .newVersionCode("v1.2")
-                // 文件大小
+                // 文件大小（非必须）
                 .fileSize("5.8M")
                 .build();
         updateUtils.startUpdate(appUpdate, this);
@@ -124,10 +124,10 @@
 ```
 ## 更新日志
 - v1.1  
-1.优化静默下载
+1.优化静默下载  
 2.版本号与文件大小改为非必传
 - v1.0  
-1.初次提交
+1.初次提交  
 ## License
 ```
 Copyright 2019 胡乐
