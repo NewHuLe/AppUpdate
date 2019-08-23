@@ -62,8 +62,8 @@ public class MainActivity extends AppCompatActivity implements MainPageExtraList
                 .updateResourceId(R.layout.dialog_update)
                 // 文件大小
                 .fileSize("5.8M")
-                //是否采取默认模式（只显示更新提示，后台下载完自动弹出安装界面），否则，显示下载进度，显示下载失败弹框
-                .defaultMode(0)
+                //是否采取静默下载模式（只显示更新提示，后台下载完自动弹出安装界面），否则，显示下载进度，显示下载失败弹框
+                .isSilentMode(false)
                 //默认不采取强制更新，否则，不更新无法使用
                 .forceUpdate(0)
                 .build();

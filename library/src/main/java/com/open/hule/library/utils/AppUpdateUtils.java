@@ -98,7 +98,7 @@ public class AppUpdateUtils implements UpdateDialogListener {
             throw new NullPointerException("AppUpdateUtils======appUpdate不能为null，请配置相关更新信息！");
         }
         this.appUpdate = appUpdate;
-        isAutoInstall = appUpdate.getDefaultMode() == 0;
+        isAutoInstall = appUpdate.getIsSlentMode();
         this.mainPageExtraListener = mainPageExtraListener;
         Bundle bundle = new Bundle();
         bundle.putParcelable("appUpdate", appUpdate);
@@ -149,7 +149,7 @@ public class AppUpdateUtils implements UpdateDialogListener {
                 // 开启下载，返回下载id
                 lastDownloadId = downloadManager.enqueue(request);
                 // 如需要进度及下载状态，增加下载监听
-                if (appUpdate.getDefaultMode() != 0) {
+                if (!appUpdate.getIsSlentMode()) {
                     DownloadHandler downloadHandler = new DownloadHandler(context, downloadObserver, progressDialog, mainPageExtraListener, this, downloadManager, lastDownloadId, appUpdate);
                     downloadObserver = new DownloadObserver(downloadHandler, downloadManager, lastDownloadId);
                     context.getContentResolver().registerContentObserver(Uri.parse("content://downloads/my_downloads"), true, downloadObserver);
@@ -246,7 +246,7 @@ public class AppUpdateUtils implements UpdateDialogListener {
             updateRemindDialog.dismiss();
         }
         // 根据状态是否弹进度框
-        if (wrfContext.get() != null && 0 != appUpdate.getDefaultMode()) {
+        if (wrfContext.get() != null && !appUpdate.getIsSlentMode()) {
             Bundle bundle = new Bundle();
             bundle.putInt("forceUpdate", appUpdate.getForceUpdate());
             progressDialog = UpdateProgressDialog.newInstance(bundle);
@@ -261,7 +261,7 @@ public class AppUpdateUtils implements UpdateDialogListener {
     public void updateRetry() {
         // 重试
         // 根据状态是否弹进度框
-        if (wrfContext.get() != null && 0 != appUpdate.getDefaultMode()) {
+        if (wrfContext.get() != null && !appUpdate.getIsSlentMode()) {
             Bundle bundle = new Bundle();
             bundle.putInt("forceUpdate", appUpdate.getForceUpdate());
             progressDialog = UpdateProgressDialog.newInstance(bundle);

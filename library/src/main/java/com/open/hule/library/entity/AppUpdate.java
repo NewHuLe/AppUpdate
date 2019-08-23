@@ -82,9 +82,9 @@ public class AppUpdate implements Parcelable {
     private int updateProgressColor;
 
     /**
-     * 风格：0代表默认模式，只弹出下载更新框,下载完毕自动安装， 1代表配合使用进度框与下载失败弹框
+     * 风格：true代表默认静默下载模式，只弹出下载更新框,下载完毕自动安装， false 代表配合使用进度框与下载失败弹框
      */
-    private int defaultMode;
+    private boolean isSilentMode;
 
     /**
      * 更新对话框的id
@@ -152,8 +152,8 @@ public class AppUpdate implements Parcelable {
         return updateProgressColor;
     }
 
-    public int getDefaultMode() {
-        return defaultMode;
+    public boolean getIsSlentMode() {
+        return isSilentMode;
     }
 
     public int getUpdateResourceId() {
@@ -176,7 +176,7 @@ public class AppUpdate implements Parcelable {
         this.updateColor = builder.updateColor;
         this.updateCancelColor = builder.updateCancelColor;
         this.updateProgressColor = builder.updateProgressColor;
-        this.defaultMode = builder.defaultMode;
+        this.isSilentMode = builder.isSilentMode;
         this.updateResourceId = builder.updateResourceId;
     }
 
@@ -245,9 +245,9 @@ public class AppUpdate implements Parcelable {
         private int updateProgressColor = R.color.color_blue;
 
         /**
-         * 风格：0代表默认模式，只弹出下载更新框， 1代表配合使用进度框与下载失败弹框
+         * 风格：true代表默认静默下载模式，只弹出下载更新框,下载完毕自动安装， false 代表配合使用进度框与下载失败弹框
          */
-        private int defaultMode = 0;
+        private boolean isSilentMode = true;
         /**
          * 更新对话框的id
          */
@@ -330,8 +330,8 @@ public class AppUpdate implements Parcelable {
             return this;
         }
 
-        public Builder defaultMode(int defaultMode) {
-            this.defaultMode = defaultMode;
+        public Builder isSilentMode(boolean isSilentMode) {
+            this.isSilentMode = isSilentMode;
             return this;
         }
 
@@ -367,11 +367,11 @@ public class AppUpdate implements Parcelable {
         dest.writeInt(this.updateColor);
         dest.writeInt(this.updateCancelColor);
         dest.writeInt(this.updateProgressColor);
-        dest.writeInt(this.defaultMode);
+        dest.writeByte(this.isSilentMode ? (byte) 1 : (byte) 0);
         dest.writeInt(this.updateResourceId);
     }
 
-    private AppUpdate(Parcel in) {
+    protected AppUpdate(Parcel in) {
         this.newVersionUrl = in.readString();
         this.newVersionCode = in.readString();
         this.forceUpdate = in.readInt();
@@ -387,7 +387,7 @@ public class AppUpdate implements Parcelable {
         this.updateColor = in.readInt();
         this.updateCancelColor = in.readInt();
         this.updateProgressColor = in.readInt();
-        this.defaultMode = in.readInt();
+        this.isSilentMode = in.readByte() != 0;
         this.updateResourceId = in.readInt();
     }
 
