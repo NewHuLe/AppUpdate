@@ -123,6 +123,8 @@
 -keep class com.open.hule.library.entity.** { *; }
 ```
 ## 更新日志
+- v1.2
+1.更改通知栏的默认下载显示（为VISIBILITY_VISIBLE_NOTIFY_COMPLETED），大部分机型下载中会在通知栏显示下载进度，除了oppo机型通知栏只显示有一个任务正在下载中...,没有显示下载进度，这个是由系统自身的下载所决定。
 - v1.1  
 1.优化静默下载  
 2.版本号与文件大小改为非必传
