@@ -32,7 +32,7 @@
 - 项目build.gradle文件添加
 ```
  	dependencies {
-	       implementation 'com.github.NewHuLe:AppUpdate:v1.1'
+	       implementation 'com.github.NewHuLe:AppUpdate:v1.2'
 	}
 ```
 - 代码调用示例，简单写法，更多配置参考demo
