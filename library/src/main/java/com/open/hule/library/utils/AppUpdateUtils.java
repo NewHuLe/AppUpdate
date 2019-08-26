@@ -130,7 +130,7 @@ public class AppUpdateUtils implements UpdateDialogListener {
                 Uri uri = Uri.parse(downloadUrl);
                 DownloadManager.Request request = new DownloadManager.Request(uri);
                 // 下载中和下载完成显示通知栏
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_ONLY_COMPLETION);
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                 if (TextUtils.isEmpty(appUpdate.getSavePath())) {
                     //使用系统默认的下载路径 此处为应用内 /android/data/packages ,所以兼容7.0
                     request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, context.getPackageName() + ".apk");
