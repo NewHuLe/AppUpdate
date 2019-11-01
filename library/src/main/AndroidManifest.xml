@@ -11,7 +11,7 @@
 
     <application>
 
-        <receiver android:name=".DownloadReceiver">
+        <receiver android:name=".downloadmanager.DownloadReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
                 <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />
@@ -19,7 +19,7 @@
         </receiver>
 
         <provider
-            android:name=".DownloadFileProvider"
+            android:name=".downloadmanager.DownloadFileProvider"
             android:authorities="${applicationId}.fileProvider"
             android:exported="false"
             android:grantUriPermissions="true">

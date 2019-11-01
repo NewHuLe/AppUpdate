@@ -14,15 +14,14 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
-
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentActivity;
 
-import com.open.hule.library.DownloadObserver;
+import com.open.hule.library.downloadmanager.DownloadHandler;
+import com.open.hule.library.downloadmanager.DownloadObserver;
 import com.open.hule.library.entity.AppUpdate;
 import com.open.hule.library.listener.MainPageExtraListener;
 import com.open.hule.library.listener.UpdateDialogListener;
-import com.open.hule.library.view.UpdateProgressDialog;
 import com.open.hule.library.view.UpdateRemindDialog;
 
 import java.io.File;
@@ -34,9 +33,9 @@ import java.util.Objects;
  * @date 2019/7/11 9:34
  * description: 下载更新工具类
  */
-public class AppUpdateUtils implements UpdateDialogListener {
+public class UpdateManager implements UpdateDialogListener {
 
-    private static final String TAG = "AppUpdateUtils";
+    private static final String TAG = "UpdateManager";
     /**
      * 是否启动自动安装
      */
@@ -69,17 +68,13 @@ public class AppUpdateUtils implements UpdateDialogListener {
      * 更新提醒对话框
      */
     private UpdateRemindDialog updateRemindDialog;
-    /**
-     * 带进度的更新框
-     */
-    private UpdateProgressDialog progressDialog;
 
     /**
      * 配置上下文，必须传
      *
      * @param context 上下文
      */
-    public AppUpdateUtils(Context context) {
+    public UpdateManager(Context context) {
         wrfContext = new WeakReference<>(context);
     }
 
@@ -92,10 +87,10 @@ public class AppUpdateUtils implements UpdateDialogListener {
     public void startUpdate(AppUpdate appUpdate, MainPageExtraListener mainPageExtraListener) {
         Context context = wrfContext.get();
         if (context == null) {
-            throw new NullPointerException("AppUpdateUtils======context不能为null，请先在构造方法中传入！");
+            throw new NullPointerException("UpdateManager======context不能为null，请先在构造方法中传入！");
         }
         if (appUpdate == null) {
-            throw new NullPointerException("AppUpdateUtils======appUpdate不能为null，请配置相关更新信息！");
+            throw new NullPointerException("UpdateManager======appUpdate不能为null，请配置相关更新信息！");
         }
         this.appUpdate = appUpdate;
         isAutoInstall = appUpdate.getIsSlentMode();
@@ -103,7 +98,7 @@ public class AppUpdateUtils implements UpdateDialogListener {
         Bundle bundle = new Bundle();
         bundle.putParcelable("appUpdate", appUpdate);
         updateRemindDialog = UpdateRemindDialog.newInstance(bundle).addUpdateListener(this);
-        updateRemindDialog.show(((FragmentActivity) context).getSupportFragmentManager(), "AppUpdateUtils");
+        updateRemindDialog.show(((FragmentActivity) context).getSupportFragmentManager(), "UpdateManager");
     }
 
     /**
@@ -134,12 +129,13 @@ public class AppUpdateUtils implements UpdateDialogListener {
                 if (TextUtils.isEmpty(appUpdate.getSavePath())) {
                     //使用系统默认的下载路径 此处为应用内 /android/data/packages ,所以兼容7.0
                     request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, context.getPackageName() + ".apk");
+                    deleteApkFile(Objects.requireNonNull(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS + File.separator + context.getPackageName() + ".apk")));
                 } else {
                     // 自定义的下载目录,注意这是涉及到android Q的存储权限，建议不要用getExternalStorageDirectory（）
                     request.setDestinationInExternalFilesDir(context, appUpdate.getSavePath(), context.getPackageName() + ".apk");
-                    // 清除本地缓存的文件
-                    deleteApkFile(Objects.requireNonNull(context.getExternalFilesDir(appUpdate.getSavePath())));
+                    deleteApkFile(Objects.requireNonNull(context.getExternalFilesDir(appUpdate.getSavePath() + File.separator + context.getPackageName() + ".apk")));
                 }
+
                 // 设置通知栏的标题
                 request.setTitle(getAppName());
                 // 设置通知栏的描述
@@ -150,20 +146,80 @@ public class AppUpdateUtils implements UpdateDialogListener {
                 lastDownloadId = downloadManager.enqueue(request);
                 // 如需要进度及下载状态，增加下载监听
                 if (!appUpdate.getIsSlentMode()) {
-                    DownloadHandler downloadHandler = new DownloadHandler(context, downloadObserver, progressDialog, mainPageExtraListener, this, downloadManager, lastDownloadId, appUpdate);
+                    DownloadHandler downloadHandler = new DownloadHandler(this);
                     downloadObserver = new DownloadObserver(downloadHandler, downloadManager, lastDownloadId);
                     context.getContentResolver().registerContentObserver(Uri.parse("content://downloads/my_downloads"), true, downloadObserver);
                 }
-
-            } else {
-                Log.d(TAG, "context==null");
             }
         } catch (Exception e) {
             e.printStackTrace();
             // 防止有些厂商更改了系统的downloadManager
             downloadFromBrowse();
         }
+    }
 
+    /**
+     * 设置下载的进度
+     *
+     * @param progress 进度
+     */
+    public void setProgress(int progress) {
+        if (updateRemindDialog != null) {
+            updateRemindDialog.setProgress(progress);
+        }
+    }
+
+    /**
+     *  取消下载的监听
+     */
+    public void unregisterContentObserver(){
+       if( wrfContext.get() !=null){
+           wrfContext.get().getContentResolver().unregisterContentObserver(downloadObserver);
+       }
+    }
+
+    /**
+     *  显示下载失败
+     */
+    public void showFail(){
+        if(updateRemindDialog !=null){
+            updateRemindDialog.showFailBtn();
+        }
+    }
+
+    /**
+     *  关闭提醒弹框
+     */
+    public void dismissDialog(){
+        if (updateRemindDialog != null && updateRemindDialog.isShowing && wrfContext.get() != null && !((Activity) wrfContext.get()).isFinishing()) {
+            updateRemindDialog.dismiss();
+        }
+    }
+
+    /**
+     * 检查本地是否有已经下载的最新apk文件
+     *
+     * @param filePath 文件相对路劲
+     */
+    private File checkLocalUpdate(String filePath) {
+        try {
+            Context context = wrfContext.get();
+            File apkFile;
+            if (TextUtils.isEmpty(filePath)) {
+                apkFile = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS + File.separator + context.getPackageName() + ".apk");
+            } else {
+                apkFile = context.getExternalFilesDir(filePath + File.separator + context.getPackageName() + ".apk");
+            }
+            PackageManager packageManager = context.getPackageManager();
+            PackageInfo packageInfo = packageManager.getPackageArchiveInfo(apkFile.getAbsolutePath(), PackageManager.GET_ACTIVITIES);
+            long apkVersionCode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ? packageInfo.getLongVersionCode() : packageInfo.versionCode;
+            if (apkVersionCode > getAppCode()) {
+                return apkFile;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -186,6 +242,8 @@ public class AppUpdateUtils implements UpdateDialogListener {
 
     /**
      * 获取应用程序名称
+     *
+     * @return 应用名称
      */
     private String getAppName() {
         try {
@@ -198,6 +256,26 @@ public class AppUpdateUtils implements UpdateDialogListener {
             e.printStackTrace();
         }
         return "下载";
+    }
+
+    /**
+     * 获取应用的版本号
+     *
+     * @return 应用版本号
+     */
+    private long getAppCode() {
+        try {
+            Context context = wrfContext.get();
+            //获取包管理器
+            PackageManager pm = context.getPackageManager();
+            //获取包信息
+            PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(), 0);
+            //返回版本号
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ? packageInfo.getLongVersionCode() : packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     /**
@@ -220,7 +298,7 @@ public class AppUpdateUtils implements UpdateDialogListener {
     /**
      * 清除上一个任务，防止apk重复下载
      */
-    private void clearCurrentTask() {
+    public void clearCurrentTask() {
         try {
             if (lastDownloadId != -1) {
                 downloadManager.remove(lastDownloadId);
@@ -241,35 +319,41 @@ public class AppUpdateUtils implements UpdateDialogListener {
 
     @Override
     public void updateDownLoad() {
-        // 立即更新，取消更新对话框
-        if (updateRemindDialog != null && updateRemindDialog.isShowing && wrfContext.get() != null && !((Activity) wrfContext.get()).isFinishing()) {
-            updateRemindDialog.dismiss();
+        // 立即更新
+        File apkFile = checkLocalUpdate(appUpdate.getSavePath());
+        if (apkFile != null) {
+            // 本地存在新版本，直接安装
+            installApp(apkFile);
+        } else {
+            // 不存在新版本，需要下载
+            if (!appUpdate.getIsSlentMode()) {
+                // 非静默模式，直接在下载更新框内部显示下载进度
+                updateRemindDialog.showProgressBtn();
+            } else {
+                // 静默模式，不显示下载进度
+                dismissDialog();
+            }
+            // 开启下载
+            downLoadApk();
         }
-        // 根据状态是否弹进度框
-        if (wrfContext.get() != null && !appUpdate.getIsSlentMode()) {
-            Bundle bundle = new Bundle();
-            bundle.putInt("forceUpdate", appUpdate.getForceUpdate());
-            progressDialog = UpdateProgressDialog.newInstance(bundle);
-            progressDialog.addUpdateDialogListener(this);
-            progressDialog.show(((FragmentActivity) wrfContext.get()).getSupportFragmentManager(), "AppUpdateUtils");
-        }
-        // 开启下载
-        downLoadApk();
     }
 
     @Override
     public void updateRetry() {
         // 重试
-        // 根据状态是否弹进度框
-        if (wrfContext.get() != null && !appUpdate.getIsSlentMode()) {
-            Bundle bundle = new Bundle();
-            bundle.putInt("forceUpdate", appUpdate.getForceUpdate());
-            progressDialog = UpdateProgressDialog.newInstance(bundle);
-            progressDialog.addUpdateDialogListener(this);
-            progressDialog.show(((FragmentActivity) wrfContext.get()).getSupportFragmentManager(), "AppUpdateUtils");
+        File apkFile = checkLocalUpdate(appUpdate.getSavePath());
+        if (apkFile != null) {
+            // 本地存在新版本，直接安装
+            installApp(apkFile);
+        } else {
+            // 不存在新版本，需要下载
+            if (!appUpdate.getIsSlentMode()) {
+                // 非静默模式，直接在下载更新框内部显示下载进度
+                updateRemindDialog.showProgressBtn();
+            }
+            // 开启下载
+            downLoadApk();
         }
-        // 开启下载
-        downLoadApk();
     }
 
     @Override
@@ -281,13 +365,56 @@ public class AppUpdateUtils implements UpdateDialogListener {
     @Override
     public void cancelUpdate() {
         // 取消更新
-        if (updateRemindDialog != null && updateRemindDialog.isShowing && wrfContext.get() != null && !((Activity) wrfContext.get()).isFinishing()) {
-            updateRemindDialog.dismiss();
-        }
-        if (progressDialog != null && progressDialog.isShowing && wrfContext.get() != null && !((Activity) wrfContext.get()).isFinishing()) {
-            progressDialog.dismiss();
-        }
         clearCurrentTask();
+        dismissDialog();
+        if (0 != appUpdate.getForceUpdate()) {
+            forceExit();
+        }
+    }
+
+    /**
+     * 安装app
+     *
+     * @param apkFile 下载的文件
+     */
+    public void installApp(File apkFile) {
+        try {
+            Context context = wrfContext.get();
+            // 验证md5
+            if (!TextUtils.isEmpty(appUpdate.getMd5())) {
+                boolean md5IsRight = Md5Util.checkFileMd5(appUpdate.getMd5(), apkFile);
+                if (!md5IsRight) {
+                    Toast.makeText(context, "为了安全性和更好的体验，为你推荐浏览器下载更新！", Toast.LENGTH_SHORT).show();
+                    downloadFromBrowse();
+                    return;
+                }
+            }
+            // 安装
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                intent.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
+            } else {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    boolean allowInstall = context.getPackageManager().canRequestPackageInstalls();
+                    if (!allowInstall) {
+                        //不允许安装未知来源应用，请求安装未知应用来源的权限
+                        if (mainPageExtraListener != null) {
+                            mainPageExtraListener.applyAndroidOInstall();
+                        }
+                        return;
+                    }
+                }
+                //Android7.0之后获取uri要用contentProvider
+                Uri apkUri = FileProvider.getUriForFile(context.getApplicationContext(), context.getPackageName() + ".fileProvider", apkFile);
+                //Granting Temporary Permissions to a URI
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -333,7 +460,7 @@ public class AppUpdateUtils implements UpdateDialogListener {
      *
      * @return file
      */
-    private File getDownloadFile() {
+    public File getDownloadFile() {
         DownloadManager.Query query = new DownloadManager.Query();
         Cursor cursor = downloadManager.query(query.setFilterById(lastDownloadId));
         if (cursor != null && cursor.moveToFirst()) {

@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.open.hule.library.entity.AppUpdate;
 import com.open.hule.library.listener.MainPageExtraListener;
-import com.open.hule.library.utils.AppUpdateUtils;
+import com.open.hule.library.utils.UpdateManager;
 
 /**
  * @author hule
@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements MainPageExtraList
 
     public static final int GET_UNKNOWN_APP_SOURCES = 1113;
 
-    private AppUpdateUtils updateUtils;
+    private UpdateManager updateManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +52,13 @@ public class MainActivity extends AppCompatActivity implements MainPageExtraList
      * 检查更新
      */
     private void checkUpdate() {
-        updateUtils = new AppUpdateUtils(MainActivity.this);
+        updateManager = new UpdateManager(MainActivity.this);
+        // 更新的数据参数
         AppUpdate appUpdate = new AppUpdate.Builder()
-                //更新地址
-                .newVersionUrl("https://imtt.dd.qq.com/16891/apk/F1571C164BDDF9610EA9125D7A011FE3.apk")
+                //更新地址（必传）
+                .newVersionUrl("https://imtt.dd.qq.com/16891/apk/062C96A8B86D52D1EEECC0EFCC56DA14.apk")
                 // 版本号
-                .newVersionCode("v1.2")
+                .newVersionCode("v1.3")
                 // 通过传入资源id来自定义更新对话框，注意取消更新的id要定义为btnUpdateLater，立即更新的id要定义为btnUpdateNow
                 .updateResourceId(R.layout.dialog_update)
                 // 文件大小
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements MainPageExtraList
                 //默认不采取强制更新，否则，不更新无法使用
                 .forceUpdate(0)
                 .build();
-        updateUtils.startUpdate(appUpdate, this);
+        updateManager.startUpdate(appUpdate, this);
     }
 
     @Override
@@ -118,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements MainPageExtraList
                     installApkAgain();
                 } else {
                     Toast.makeText(MainActivity.this, "您拒绝了安装未知来源应用，应用暂时无法更新！", Toast.LENGTH_SHORT).show();
-                    if (0 != updateUtils.getAppUpdate().getForceUpdate()) {
+                    if (0 != updateManager.getAppUpdate().getForceUpdate()) {
                         forceExit();
                     }
                 }
@@ -126,9 +127,12 @@ public class MainActivity extends AppCompatActivity implements MainPageExtraList
         }
     }
 
+    /**
+     *  授权后，再次尝试安装
+     */
     private void installApkAgain() {
-        if (updateUtils != null) {
-            updateUtils.installAppAgain();
+        if (updateManager != null) {
+            updateManager.installAppAgain();
         }
     }
 }

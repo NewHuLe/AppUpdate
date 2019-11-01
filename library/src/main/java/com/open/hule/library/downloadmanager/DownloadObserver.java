@@ -1,4 +1,4 @@
-package com.open.hule.library;
+package com.open.hule.library.downloadmanager;
 
 import android.app.DownloadManager;
 import android.database.ContentObserver;

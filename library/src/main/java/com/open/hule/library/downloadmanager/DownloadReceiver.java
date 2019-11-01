@@ -1,4 +1,4 @@
-package com.open.hule.library;
+package com.open.hule.library.downloadmanager;
 
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
@@ -11,7 +11,7 @@ import android.text.TextUtils;
 
 import androidx.core.content.FileProvider;
 
-import com.open.hule.library.utils.AppUpdateUtils;
+import com.open.hule.library.utils.UpdateManager;
 
 import java.io.File;
 import java.util.Objects;
@@ -25,7 +25,7 @@ import java.util.Objects;
 public class DownloadReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent != null && AppUpdateUtils.isAutoInstall) {
+        if (intent != null && UpdateManager.isAutoInstall) {
             if (Objects.requireNonNull(intent.getAction()).equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
                 // 下载完成
                 long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
