@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,10 +28,50 @@ import com.open.hule.library.listener.UpdateDialogListener;
  * 相信你会明白这是google的推荐，在一个原因可高度定制你想要的任何更新界面
  */
 public class UpdateRemindDialog extends BaseDialog {
+
+    /**
+     * 进度条
+     */
+    private NumberProgressBar progressBar;
+    /**
+     * 底部按钮事件的根布局
+     */
+    private LinearLayout llEvent;
+
+    /**
+     * 取消更新下载按钮
+     */
+    private Button btnCancelUpdate;
+    /**
+     * 稍后更新按钮
+     */
+    private Button btnUpdateLater;
+    /**
+     * 立即更新按钮
+     */
+    private Button btnUpdateNow;
+    /**
+     * 浏览器下载按钮
+     */
+    private Button btnUpdateBrowse;
+    /**
+     * 重试下载
+     */
+    private Button btnUpdateRetry;
+    /**
+     * 取消更新（退出应用）
+     */
+    private Button btnUpdateExit;
+
+    /**
+     * 更新数据
+     */
+    private AppUpdate appUpdate;
     /**
      * 监听接口
      */
     private UpdateDialogListener updateDialogListener;
+
 
     /**
      * 初始化弹框
@@ -66,7 +107,7 @@ public class UpdateRemindDialog extends BaseDialog {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (getArguments() != null) {
-            AppUpdate appUpdate = getArguments().getParcelable("appUpdate");
+            appUpdate = getArguments().getParcelable("appUpdate");
             if (appUpdate != null && appUpdate.getUpdateResourceId() != 0) {
                 return inflater.inflate(appUpdate.getUpdateResourceId(), container, false);
             }
@@ -77,11 +118,6 @@ public class UpdateRemindDialog extends BaseDialog {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (getArguments() == null) {
-            dismiss();
-            return;
-        }
-        AppUpdate appUpdate = getArguments().getParcelable("appUpdate");
         if (appUpdate == null) {
             dismiss();
             return;
@@ -102,15 +138,27 @@ public class UpdateRemindDialog extends BaseDialog {
             TextView tvContent = view.findViewById(R.id.tvContent);
             // 更新的标题
             tvTitle.setText(appUpdate.getUpdateTitle());
+            // 底部按钮事件的根布局
+            llEvent = view.findViewById(R.id.llEvent);
+            // 进度条
+            progressBar = view.findViewById(R.id.nbpProgress);
+            // 浏览器下载
+            btnUpdateBrowse = view.findViewById(R.id.btnUpdateBrowse);
+            // 取消更新
+            btnCancelUpdate = view.findViewById(R.id.btnCancelUpdate);
+            // 重新下载
+            btnUpdateRetry = view.findViewById(R.id.btnUpdateRetry);
+            // 取消更新（退出应用）
+            btnUpdateExit = view.findViewById(R.id.btnUpdateExit);
             if (TextUtils.isEmpty(appUpdate.getNewVersionCode())) {
                 tvVersion.setVisibility(View.GONE);
             } else {
                 tvVersion.setVisibility(View.VISIBLE);
                 tvVersion.setText(String.format(getResources().getString(R.string.update_version), appUpdate.getNewVersionCode()));
             }
-            if(TextUtils.isEmpty(appUpdate.getFileSize())){
+            if (TextUtils.isEmpty(appUpdate.getFileSize())) {
                 tvFileSize.setVisibility(View.GONE);
-            }else {
+            } else {
                 tvFileSize.setVisibility(View.VISIBLE);
                 tvFileSize.setText(String.format(getResources().getString(R.string.update_size), appUpdate.getFileSize()));
             }
@@ -122,14 +170,45 @@ public class UpdateRemindDialog extends BaseDialog {
             } else {
                 tvForceUpdate.setVisibility(View.VISIBLE);
             }
+            btnCancelUpdate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (updateDialogListener != null) {
+                        updateDialogListener.cancelUpdate();
+                    }
+                }
+            });
+            btnUpdateBrowse.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (updateDialogListener != null) {
+                        updateDialogListener.downFromBrowser();
+                    }
+                }
+            });
+            btnUpdateRetry.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (updateDialogListener != null) {
+                        updateDialogListener.updateRetry();
+                    }
+                }
+            });
+            btnUpdateExit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (updateDialogListener != null) {
+                        updateDialogListener.cancelUpdate();
+                    }
+                }
+            });
         }
 
         // 取消更新的按钮文本提示
-        Button btnUpdateLater = view.findViewById(R.id.btnUpdateLater);
-        // 更新的按钮文本提示
-        Button btnUpdateNow = view.findViewById(R.id.btnUpdateNow);
-
+        btnUpdateLater = view.findViewById(R.id.btnUpdateLater);
         btnUpdateLater.setText(appUpdate.getUpdateCancelText());
+        // 更新的按钮文本提示
+        btnUpdateNow = view.findViewById(R.id.btnUpdateNow);
         btnUpdateNow.setText(appUpdate.getUpdateText());
         if (appUpdate.getForceUpdate() == 0) {
             btnUpdateLater.setVisibility(View.VISIBLE);
@@ -154,6 +233,69 @@ public class UpdateRemindDialog extends BaseDialog {
                 }
             }
         });
+    }
+
+    /**
+     * 更新下载的进度
+     *
+     * @param currentProgress 当前进度
+     */
+    public void setProgress(int currentProgress) {
+        if (progressBar != null && currentProgress > 0) {
+            progressBar.setProgress(currentProgress);
+        }
+    }
+
+    /**
+     * 开启进度条，若强制更新则隐藏底部所有按钮只显示进度条，
+     * 否则显示取消更新按钮，隐藏稍后更新与立即更新
+     */
+    public void showProgressBtn() {
+        if (progressBar != null) {
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(0);
+        }
+        if (0 == appUpdate.getForceUpdate()) {
+            // 非强制更新
+            llEvent.setVisibility(View.VISIBLE);
+            if (btnCancelUpdate != null) {
+                btnUpdateLater.setVisibility(View.GONE);
+                btnUpdateNow.setVisibility(View.GONE);
+                btnCancelUpdate.setVisibility(View.VISIBLE);
+                btnUpdateBrowse.setVisibility(View.GONE);
+                btnUpdateExit.setVisibility(View.GONE);
+                btnUpdateRetry.setVisibility(View.GONE);
+            }
+        } else {
+            // 强制更新
+            llEvent.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 显示下载失败的按钮，如果强制更新，显示重试下载和浏览器下载，退出应用
+     * 如果非强制更新，显示重试下载和浏览器下载，取消
+     */
+    public void showFailBtn() {
+        Toast.makeText(getContext(),"更新失败啦，请重试！",Toast.LENGTH_SHORT).show();
+        if (progressBar != null) {
+            progressBar.setVisibility(View.GONE);
+        }
+        // 非强制更新
+        llEvent.setVisibility(View.VISIBLE);
+        btnUpdateLater.setVisibility(View.GONE);
+        btnUpdateNow.setVisibility(View.GONE);
+        btnCancelUpdate.setVisibility(View.GONE);
+        btnUpdateBrowse.setVisibility(View.VISIBLE);
+        btnUpdateExit.setVisibility(View.VISIBLE);
+        btnUpdateRetry.setVisibility(View.VISIBLE);
+        if (0 == appUpdate.getForceUpdate()) {
+            // 非强制更新
+            btnUpdateExit.setText("取消");
+        } else {
+            // 强制更新
+            btnUpdateExit.setText("退出");
+        }
     }
 
     /**

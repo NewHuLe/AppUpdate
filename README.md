@@ -5,6 +5,7 @@
 
 原生DownloadManager实现版本的检测更新，自由控制下载进度、下载失败弹框、是否强制更新、是否MD5校验、完美适配Android M/N/O/P/Q
 ## 功能介绍
+- 兼容AndroidX，项目已经迁移到Androidx
 - 适配Android M，处理关于存储文件的运行时权限
 - 适配Android N，安卓增强了文件访问的安全性，利用FileProvider来访问文件
 - 适配Android O，增加未知来源应用的安装提示
@@ -32,21 +33,21 @@
 - 项目build.gradle文件添加
 ```
  	dependencies {
-	       implementation 'com.github.NewHuLe:AppUpdate:v1.2'
+	       implementation 'com.github.NewHuLe:AppUpdate:v1.3'
 	}
 ```
 - 代码调用示例，简单写法，更多配置参考demo
 ```
- AppUpdateUtils updateUtils = new AppUpdateUtils(MainActivity.this);
+ UpdateManager updateManager = new UpdateManager(MainActivity.this);
         AppUpdate appUpdate = new AppUpdate.Builder()
                 //更新地址（必须）
                 .newVersionUrl("https://imtt.dd.qq.com/16891/8EC4E86B648D57FDF114AF5D3002C09B.apk")
                 // 版本号（非必须）
-                .newVersionCode("v1.2")
+                .newVersionCode("v1.3")
                 // 文件大小（非必须）
                 .fileSize("5.8M")
                 .build();
-        updateUtils.startUpdate(appUpdate, this);
+        updateManager.startUpdate(appUpdate, this);
 ```
 - 下载完成后，默认安装已经发出允许安装未知来源应用权限申请，如果拒绝权限，需要在更新页面增加权限拒绝后的回调处理，详情可见demo
 ```
@@ -101,22 +102,23 @@
 ```
 - 更高级调用写法：
 ```
- AppUpdateUtils updateUtils = new AppUpdateUtils(MainActivity.this);
+ UpdateManager updateManager = new UpdateManager(MainActivity.this);
         AppUpdate appUpdate = new AppUpdate.Builder()
-                //更新地址
+                //更新地址(必传)
                 .newVersionUrl("https://imtt.dd.qq.com/16891/8EC4E86B648D57FDF114AF5D3002C09B.apk")
                 // 版本号
-                .newVersionCode("v1.2")
+                .newVersionCode("v1.3")
                 // 通过传入资源id来自定义更新对话框，注意取消更新的id要定义为btnUpdateLater，立即更新的id要定义为btnUpdateNow
+                // v1.3版本该功能只对静默下载模式开放
                 .updateResourceId(R.layout.dialog_update)
                 // 文件大小
                 .fileSize("5.8M")
                 //是否采取静默下载模式（只显示更新提示，后台下载完自动弹出安装界面），否则，显示下载进度，显示下载失败弹框
-                .isSilentMode(false)
+                .isSilentMode(true)
                 //默认不采取强制更新，否则，不更新无法使用
                 .forceUpdate(0)
                 .build();
-        updateUtils.startUpdate(appUpdate, this);
+        updateManager.startUpdate(appUpdate, this);
 ```
 ## 混淆配置
 ```
@@ -126,6 +128,14 @@
 1.将下载进度条与更新提示框合并，直接显示在更新提示框的下方  
 2.自动检测本地是否有最新的安装文件，如果有直接安装，无需下载
 ## 更新日志
+- v1.3
+1.非静默下载模式下，将下载进度条与下载失败融合进更新提醒框，不在单独开启下载进度弹框与下载失败弹框
+2.自动检测本地是否有最新的安装文件，如果有直接安装，无需下载
+3.库内部优化
+```
+AppUpdateUtils更名为UpdateManager
+更新提醒框的自定义布局功能暂时只对静默下载模式下开放
+```
 - v1.2  
 1.更改通知栏的默认下载显示（为VISIBILITY_VISIBLE_NOTIFY_COMPLETED），大部分机型下载中会在通知栏显示下载进度，除了oppo机型通知栏只显示有一个任务正在下载中...,没有显示下载进度，这个是由系统自身的下载所决定。
 - v1.1  
