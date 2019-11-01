@@ -17,9 +17,8 @@
 - 支持自定义更新提示界面
 - 下载失败支持通过系统浏览器下载
 ## 效果图
-![](https://github.com/NewHuLe/AppUpdate/blob/master/screenshots/%E6%88%AA%E5%9B%BE1.jpg)
-![](https://github.com/NewHuLe/AppUpdate/blob/master/screenshots/%E6%88%AA%E5%9B%BE2.jpg)
-![](https://github.com/NewHuLe/AppUpdate/blob/master/screenshots/%E6%88%AA%E5%9B%BE3.jpg)
+![](https://github.com/NewHuLe/AppUpdate/blob/master/screenshots/%E5%BC%BA%E5%88%B6%E6%9B%B4%E6%96%B0.jpg)
+![](https://github.com/NewHuLe/AppUpdate/blob/master/screenshots/%E9%9D%9E%E5%BC%BA%E5%88%B6%E6%9B%B4%E6%96%B0.jpg)
 ## 关于使用
 - 工程build.gradle目录添加
 ```
@@ -125,17 +124,12 @@
 -keep class com.open.hule.library.entity.** { *; }
 ```
 ## 意见收集，下个版本即将优化
-1.将下载进度条与更新提示框合并，直接显示在更新提示框的下方  
-2.自动检测本地是否有最新的安装文件，如果有直接安装，无需下载
+1.增加Kotlin语言版本
 ## 更新日志
 - v1.3
 1.非静默下载模式下，将下载进度条与下载失败融合进更新提醒框，不在单独开启下载进度弹框与下载失败弹框
 2.自动检测本地是否有最新的安装文件，如果有直接安装，无需下载
-3.库内部优化
-```
-AppUpdateUtils更名为UpdateManager
-更新提醒框的自定义布局功能暂时只对静默下载模式下开放
-```
+3.库内部优化（AppUpdateUtils更名为UpdateManager）
 - v1.2  
 1.更改通知栏的默认下载显示（为VISIBILITY_VISIBLE_NOTIFY_COMPLETED），大部分机型下载中会在通知栏显示下载进度，除了oppo机型通知栏只显示有一个任务正在下载中...,没有显示下载进度，这个是由系统自身的下载所决定。
 - v1.1  
