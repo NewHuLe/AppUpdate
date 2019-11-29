@@ -56,9 +56,9 @@ public class MainActivity extends AppCompatActivity implements MainPageExtraList
         // 更新的数据参数
         AppUpdate appUpdate = new AppUpdate.Builder()
                 //更新地址（必传）
-                .newVersionUrl("https://imtt.dd.qq.com/16891/apk/062C96A8B86D52D1EEECC0EFCC56DA14.apk")
+                .newVersionUrl("https://imtt.dd.qq.com/16891/apk/5CACCB57E3F02E46404D27ABAA85474C.apk")
                 // 版本号
-                .newVersionCode("v1.3")
+                .newVersionCode("v1.4")
                 // 通过传入资源id来自定义更新对话框，注意取消更新的id要定义为btnUpdateLater，立即更新的id要定义为btnUpdateNow
                 .updateResourceId(R.layout.dialog_update)
                 // 文件大小

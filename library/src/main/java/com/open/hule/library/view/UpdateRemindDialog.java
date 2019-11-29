@@ -215,7 +215,6 @@ public class UpdateRemindDialog extends BaseDialog {
         } else {
             btnUpdateLater.setVisibility(View.GONE);
         }
-
         btnUpdateLater.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -277,7 +276,7 @@ public class UpdateRemindDialog extends BaseDialog {
      * 如果非强制更新，显示重试下载和浏览器下载，取消
      */
     public void showFailBtn() {
-        Toast.makeText(getContext(),"更新失败啦，请重试！",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "更新失败啦，请重试！", Toast.LENGTH_SHORT).show();
         if (progressBar != null) {
             progressBar.setVisibility(View.GONE);
         }
@@ -315,7 +314,9 @@ public class UpdateRemindDialog extends BaseDialog {
             // 申请授权
             requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         } else {
-            updateDialogListener.updateDownLoad();
+            if (updateDialogListener != null) {
+                updateDialogListener.updateDownLoad();
+            }
         }
     }
 
@@ -325,7 +326,9 @@ public class UpdateRemindDialog extends BaseDialog {
         if (requestCode == 1) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 //升级
-                updateDialogListener.updateDownLoad();
+                if (updateDialogListener != null) {
+                    updateDialogListener.updateDownLoad();
+                }
             } else {
                 //提示，并且关闭
                 Toast.makeText(getActivity(), getResources().getString(R.string.update_permission), Toast.LENGTH_LONG).show();

@@ -80,7 +80,7 @@ public abstract class BaseDialog extends AppCompatDialogFragment {
 
 
     @Override
-    public void show(FragmentManager manager, String tag) {
+    public void show(@NonNull FragmentManager manager, String tag) {
         try {
             if (isShowing) {
                 return;
@@ -95,7 +95,9 @@ public abstract class BaseDialog extends AppCompatDialogFragment {
     @Override
     public void dismiss() {
         try {
-            super.dismiss();
+            // 不要使用super.dismiss()，会出现Can not perform this action after onSaveInstanceState异常
+            // 当Activity被杀死或者按下Home回调用系统的onSaveInstance(),保存状态后，如果再次执行dismiss()会报错
+            super.dismissAllowingStateLoss();
             isShowing = false;
         } catch (Exception e) {
             e.printStackTrace();
