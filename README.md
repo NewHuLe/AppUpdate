@@ -42,7 +42,7 @@
                 //更新地址（必须）
                 .newVersionUrl("https://imtt.dd.qq.com/16891/8EC4E86B648D57FDF114AF5D3002C09B.apk")
                 // 版本号（非必须）
-                .newVersionCode("v1.3")
+                .newVersionCode("v1.4")
                 // 文件大小（非必须）
                 .fileSize("5.8M")
                 .build();
@@ -106,7 +106,7 @@
                 //更新地址(必传)
                 .newVersionUrl("https://imtt.dd.qq.com/16891/8EC4E86B648D57FDF114AF5D3002C09B.apk")
                 // 版本号
-                .newVersionCode("v1.3")
+                .newVersionCode("v1.4")
                 // 通过传入资源id来自定义更新对话框，注意取消更新的id要定义为btnUpdateLater，立即更新的id要定义为btnUpdateNow
                 // v1.3版本该功能只对静默下载模式开放
                 .updateResourceId(R.layout.dialog_update)
@@ -126,6 +126,12 @@
 ## 意见收集，下个版本即将优化
 1.增加Kotlin语言版本
 ## 更新日志
+- v1.4
+1.非静默下载模式下，按下Home键，此时系统会调用onSaveInstance(),对弹框造成的影响优化
+2.关于下载进度可能出现负值优化，由于大文件进度换算超出了int范围，改用long类型
+3.若本地已经下载最新apk文件，点击立即更新，覆盖安装时，关闭提醒框
+4.使用Java7新的try-with-resources ，凡是实现了AutoCloseable接口的可自动close()，所以无需在手动close()
+5.库内部其他健壮性优化
 - v1.3  
 1.非静默下载模式下，将下载进度条与下载失败融合进更新提醒框，不在单独开启下载进度弹框与下载失败弹框  
 2.自动检测本地是否有最新的安装文件，如果有直接安装，无需下载  
