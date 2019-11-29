@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentActivity;
 
@@ -23,7 +24,6 @@ import com.open.hule.library.entity.AppUpdate;
 import com.open.hule.library.listener.MainPageExtraListener;
 import com.open.hule.library.listener.UpdateDialogListener;
 import com.open.hule.library.view.UpdateRemindDialog;
-
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
@@ -170,27 +170,27 @@ public class UpdateManager implements UpdateDialogListener {
     }
 
     /**
-     *  取消下载的监听
+     * 取消下载的监听
      */
-    public void unregisterContentObserver(){
-       if( wrfContext.get() !=null){
-           wrfContext.get().getContentResolver().unregisterContentObserver(downloadObserver);
-       }
+    public void unregisterContentObserver() {
+        if (wrfContext.get() != null) {
+            wrfContext.get().getContentResolver().unregisterContentObserver(downloadObserver);
+        }
     }
 
     /**
-     *  显示下载失败
+     * 显示下载失败
      */
-    public void showFail(){
-        if(updateRemindDialog !=null){
+    public void showFail() {
+        if (updateRemindDialog != null) {
             updateRemindDialog.showFailBtn();
         }
     }
 
     /**
-     *  关闭提醒弹框
+     * 关闭提醒弹框
      */
-    public void dismissDialog(){
+    public void dismissDialog() {
         if (updateRemindDialog != null && updateRemindDialog.isShowing && wrfContext.get() != null && !((Activity) wrfContext.get()).isFinishing()) {
             updateRemindDialog.dismiss();
         }
@@ -210,14 +210,19 @@ public class UpdateManager implements UpdateDialogListener {
             } else {
                 apkFile = context.getExternalFilesDir(filePath + File.separator + context.getPackageName() + ".apk");
             }
-            PackageManager packageManager = context.getPackageManager();
-            PackageInfo packageInfo = packageManager.getPackageArchiveInfo(apkFile.getAbsolutePath(), PackageManager.GET_ACTIVITIES);
-            long apkVersionCode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ? packageInfo.getLongVersionCode() : packageInfo.versionCode;
-            if (apkVersionCode > getAppCode()) {
-                return apkFile;
+            // 注意系统的getExternalFilesDir（）方法如果找不到文件会默认当成目录创建
+            if (apkFile != null && apkFile.isFile()) {
+                PackageManager packageManager = context.getPackageManager();
+                PackageInfo packageInfo = packageManager.getPackageArchiveInfo(apkFile.getAbsolutePath(), PackageManager.GET_ACTIVITIES);
+                if (packageInfo != null) {
+                    long apkVersionCode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ? packageInfo.getLongVersionCode() : packageInfo.versionCode;
+                    if (apkVersionCode > getAppCode()) {
+                        return apkFile;
+                    }
+                }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.d(TAG, "checkLocalUpdate:本地目录没有已经下载的新版本");
         }
         return null;
     }
@@ -379,6 +384,10 @@ public class UpdateManager implements UpdateDialogListener {
      */
     public void installApp(File apkFile) {
         try {
+            // 本地覆盖安装前取消更新弹框
+            if (updateRemindDialog != null && updateRemindDialog.isShowing) {
+                updateRemindDialog.dismiss();
+            }
             Context context = wrfContext.get();
             // 验证md5
             if (!TextUtils.isEmpty(appUpdate.getMd5())) {
