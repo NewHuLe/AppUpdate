@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -135,7 +136,12 @@ public class UpdateManager implements UpdateDialogListener {
                     request.setDestinationInExternalFilesDir(context, appUpdate.getSavePath(), context.getPackageName() + ".apk");
                     deleteApkFile(Objects.requireNonNull(context.getExternalFilesDir(appUpdate.getSavePath() + File.separator + context.getPackageName() + ".apk")));
                 }
-
+                // 部分机型（暂时发现Nexus 6P）无法下载，猜测原因为默认下载通过计量网络连接造成的，通过动态判断一下
+                ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                if(connectivityManager !=null){
+                    boolean activeNetworkMetered = connectivityManager.isActiveNetworkMetered();
+                    request.setAllowedOverMetered(activeNetworkMetered);
+                }
                 // 设置通知栏的标题
                 request.setTitle(getAppName());
                 // 设置通知栏的描述
