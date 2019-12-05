@@ -1,4 +1,4 @@
-## Android版本更新
+## Android版本更新（最新版本v1.5）
 [![](https://www.jitpack.io/v/NewHuLe/AppUpdate.svg)](https://www.jitpack.io/#NewHuLe/AppUpdate)
 [![](https://github.com/NewHuLe/AppUpdate/blob/master/author/author_jianshu.svg)](https://www.jianshu.com/u/e87d858e89a4)
 [![](https://github.com/NewHuLe/AppUpdate/blob/master/author/author_juejin.svg)](https://juejin.im/user/5823e16c5bbb50005907fdb2/posts) 
@@ -32,7 +32,7 @@
 - 项目build.gradle文件添加
 ```
  	dependencies {
-	       implementation 'com.github.NewHuLe:AppUpdate:v1.4'
+	       implementation 'com.github.NewHuLe:AppUpdate:v1.5'
 	}
 ```
 - 代码调用示例，简单写法，更多配置参考demo
@@ -134,6 +134,8 @@
 ## 意见收集，下个版本即将优化
 1.增加Kotlin语言版本
 ## 更新日志
+- v1.5  
+1.fix:修复部分机型（目前只发现Nexus 6P）下载无反应，这是系统下载默认通过计量网络连接的bug    
 - v1.4  
 1.非静默下载模式下，按下Home键，此时系统会调用onSaveInstance(),对弹框造成的影响优化  
 2.关于下载进度可能出现负值优化，由于大文件进度换算超出了int范围，改用long类型  
