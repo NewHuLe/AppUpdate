@@ -142,6 +142,8 @@ public class UpdateManager implements UpdateDialogListener {
                     boolean activeNetworkMetered = connectivityManager.isActiveNetworkMetered();
                     request.setAllowedOverMetered(activeNetworkMetered);
                 }
+                // 允许媒体扫描，虽然在Android Q上过时，但是目前发现一加的手机需要设置，不然可能无法下载
+                request.allowScanningByMediaScanner();
                 // 设置通知栏的标题
                 request.setTitle(getAppName());
                 // 设置通知栏的描述
