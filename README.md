@@ -1,4 +1,5 @@
-## Android版本更新（最新版本v1.5）
+## Android版本更新（最新版本v1.6） 
+【注意】基于原生DownloadManager的下载目前不在维护，v1.6版本为最终版本，如果有需要可自行下载v1.6版本源码自己进行改造，下个版本开始，将使用Service结合Okhttp下载来替代DownloadManager，主要原因是因为：DownloadManager系统通知栏表现不一致，还有就是下载在不同的机型上碎片化严重，不方便维护，请大家关注下个新版本。   
 [![](https://www.jitpack.io/v/NewHuLe/AppUpdate.svg)](https://www.jitpack.io/#NewHuLe/AppUpdate)
 [![](https://github.com/NewHuLe/AppUpdate/blob/master/author/author_juejin.svg)](https://juejin.im/user/5823e16c5bbb50005907fdb2/posts)
 [![](https://github.com/NewHuLe/AppUpdate/blob/master/author/author_jianshu.svg)](https://www.jianshu.com/u/e87d858e89a4)  
@@ -32,7 +33,7 @@
 - 项目build.gradle文件添加
 ```
  	dependencies {
-	       implementation 'com.github.NewHuLe:AppUpdate:v1.5'
+	       implementation 'com.github.NewHuLe:AppUpdate:v1.6'
 	}
 ```
 - 代码调用示例，简单写法，更多配置参考demo
@@ -42,7 +43,7 @@
                 //更新地址（必须）
                 .newVersionUrl("https://imtt.dd.qq.com/16891/8EC4E86B648D57FDF114AF5D3002C09B.apk")
                 // 版本号（非必须）
-                .newVersionCode("v1.4")
+                .newVersionCode("v1.6")
                 // 文件大小（非必须）
                 .fileSize("5.8M")
                 // 更新内容（非必填，默认“1.用户体验优化\n2.部分问题修复”）
@@ -131,12 +132,12 @@
 ```
 -keep class com.open.hule.library.entity.** { *; }
 ```
-## 意见收集，下个版本即将优化
-1.增加Kotlin语言版本   
-2.优化混淆配置，直接在aar中混淆，无需在集成时混淆  
 ## 更新日志
+- v1.6  
+1.混淆已迁移至aar，依赖的项目无需混淆  
+2.优化一加手机在Android Q上下载不稳定情况  
 - v1.5  
-1.fix:修复部分机型（目前只发现Nexus 6P）下载无反应，这是系统下载默认通过计量网络连接的bug    
+1.修复部分机型（目前只发现Nexus 6P）下载无反应，这是系统下载默认通过计量网络连接的bug    
 - v1.4  
 1.非静默下载模式下，按下Home键，此时系统会调用onSaveInstance(),对弹框造成的影响优化  
 2.关于下载进度可能出现负值优化，由于大文件进度换算超出了int范围，改用long类型  
