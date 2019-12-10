@@ -1,9 +1,9 @@
-## Android版本更新
+## Android版本更新（最新版本v1.5）
 [![](https://www.jitpack.io/v/NewHuLe/AppUpdate.svg)](https://www.jitpack.io/#NewHuLe/AppUpdate)
-[![](https://github.com/NewHuLe/AppUpdate/blob/master/author/author_jianshu.svg)](https://www.jianshu.com/u/e87d858e89a4)
-[![](https://github.com/NewHuLe/AppUpdate/blob/master/author/author_juejin.svg)](https://juejin.im/user/5823e16c5bbb50005907fdb2/posts) 
+[![](https://github.com/NewHuLe/AppUpdate/blob/master/author/author_juejin.svg)](https://juejin.im/user/5823e16c5bbb50005907fdb2/posts)
+[![](https://github.com/NewHuLe/AppUpdate/blob/master/author/author_jianshu.svg)](https://www.jianshu.com/u/e87d858e89a4)  
 
-原生DownloadManager实现版本的检测更新，自由控制下载进度、下载失败弹框、是否强制更新、是否MD5校验、完美适配Android M/N/O/P/Q
+原生DownloadManager实现版本的检测更新，可采取静默模式，非静默模式（进度框），是否强制更新、是否MD5校验、完美适配Android M/N/O/P/Q
 ## 功能介绍
 - 兼容AndroidX，项目已经迁移到Androidx
 - 适配Android M，处理关于存储文件的运行时权限
@@ -32,7 +32,7 @@
 - 项目build.gradle文件添加
 ```
  	dependencies {
-	       implementation 'com.github.NewHuLe:AppUpdate:v1.4'
+	       implementation 'com.github.NewHuLe:AppUpdate:v1.5'
 	}
 ```
 - 代码调用示例，简单写法，更多配置参考demo
@@ -132,8 +132,11 @@
 -keep class com.open.hule.library.entity.** { *; }
 ```
 ## 意见收集，下个版本即将优化
-1.增加Kotlin语言版本
+1.增加Kotlin语言版本   
+2.优化混淆配置，直接在aar中混淆，无需在集成时混淆  
 ## 更新日志
+- v1.5  
+1.fix:修复部分机型（目前只发现Nexus 6P）下载无反应，这是系统下载默认通过计量网络连接的bug    
 - v1.4  
 1.非静默下载模式下，按下Home键，此时系统会调用onSaveInstance(),对弹框造成的影响优化  
 2.关于下载进度可能出现负值优化，由于大文件进度换算超出了int范围，改用long类型  
@@ -145,7 +148,7 @@
 2.自动检测本地是否有最新的安装文件，如果有直接安装，无需下载  
 3.库内部优化（AppUpdateUtils更名为UpdateManager） 
 - v1.2  
-1.更改通知栏的默认下载显示（为VISIBILITY_VISIBLE_NOTIFY_COMPLETED），大部分机型下载中会在通知栏显示下载进度，除了oppo机型通知栏只显示有一个任务正在下载中...,没有显示下载进度，这个是由系统自身的下载所决定。
+1.更改通知栏的默认下载显示，由手机系统决定通知栏是否显示下载进度。 
 - v1.1  
 1.优化静默下载  
 2.版本号与文件大小改为非必传  
