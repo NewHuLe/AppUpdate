@@ -3,8 +3,6 @@
 [![](https://github.com/NewHuLe/AppUpdate/blob/master/author/author_juejin.svg)](https://juejin.im/user/5823e16c5bbb50005907fdb2/posts)
 [![](https://github.com/NewHuLe/AppUpdate/blob/master/author/author_jianshu.svg)](https://www.jianshu.com/u/e87d858e89a4)  
 
-【注意】基于原生DownloadManager的下载目前不在维护，v1.6版本为最终版本，如果有需要可自行下载v1.6版本源码自己进行改造，下个版本开始，将使用Service结合Okhttp下载来替代DownloadManager，主要原因是因为：DownloadManager系统通知栏表现不一致，还有就是下载在不同的机型上碎片化严重，不方便维护，请大家关注下个新版本。   
-
 原生DownloadManager实现版本的检测更新，可采取静默模式，非静默模式（进度框），是否强制更新、是否MD5校验、完美适配Android M/N/O/P/Q
 ## 功能介绍
 - 兼容AndroidX，项目已经迁移到Androidx
