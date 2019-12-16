@@ -18,18 +18,22 @@ public interface UpdateDialogListener {
     void updateDownLoad();
 
     /**
-     *  重试按钮，进行重新下载
+     * 重试按钮，进行重新下载
      */
     void updateRetry();
 
     /**
-     *  若应用下载失败，可以选择去应用市场下载或者去浏览器下载
+     * 若应用下载失败，可以选择去应用市场下载或者去浏览器下载
      */
     void downFromBrowser();
 
     /**
-     *  取消更新
+     * 取消更新
      */
     void cancelUpdate();
 
+    /**
+     * 重新安装
+     */
+    void installApkAgain();
 }

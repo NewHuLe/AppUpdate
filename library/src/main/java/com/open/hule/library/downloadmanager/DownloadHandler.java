@@ -43,16 +43,9 @@ public class DownloadHandler extends Handler {
                     wrfUpdateManager.get().setProgress(100);
                     wrfUpdateManager.get().unregisterContentObserver();
                 }
-                //下载成功,做200ms安装延迟
-                postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (wrfUpdateManager.get() != null) {
-                            wrfUpdateManager.get().dismissDialog();
-                            wrfUpdateManager.get().installApp(wrfUpdateManager.get().getDownloadFile());
-                        }
-                    }
-                }, 200);
+                if (wrfUpdateManager.get() != null) {
+                    wrfUpdateManager.get().installApp(wrfUpdateManager.get().getDownloadFile());
+                }
                 break;
             case DownloadManager.STATUS_FAILED:
                 // 下载失败，清除本次的下载任务
