@@ -48,7 +48,7 @@
                 // 更新内容（非必填，默认“1.用户体验优化\n2.部分问题修复”）
                 .updateInfo("1.用户体验优化\n2.部分问题修复")
                 .build();
-        new UpdateManager(MainActivity.this).startUpdate(appUpdate, this);
+        new UpdateManager().startUpdate(MainActivity.this, appUpdate);
 ```
 - 更高级调用写法（详细的配置请查看AppUpdate参数）：
 ```
