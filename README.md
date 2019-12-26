@@ -74,6 +74,8 @@
                 .isSilentMode(false)
                 //是否强制更新（非必填，默认不采取强制更新，否则，不更新无法使用）
                 .forceUpdate(0)
+                 //文件的MD5值，默认不传，如果不传，不会去验证md5(非静默下载模式生效，若有值，且验证不一致，会启动浏览器去下载)
+                .md5("2d9feb595d3aa093e9ee49412d2c8805")
                 .build();
         new UpdateManager().startUpdate(MainActivity.this, appUpdate);
 ```  
