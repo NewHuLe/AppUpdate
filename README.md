@@ -58,6 +58,7 @@
                 .newVersionUrl("https://imtt.dd.qq.com/16891/apk/5CACCB57E3F02E46404D27ABAA85474C.apk")
                 // 版本号（非必填）
                 .newVersionCode("v1.6")
+		//【建议】：自定义布局在静默下载模式下使用
                 // 通过传入资源id来自定义更新对话框，注意取消更新的id要定义为btnUpdateLater，立即更新的id要定义为btnUpdateNow（非必填）
                 .updateResourceId(R.layout.dialog_update)
                 // 更新的标题，弹框的标题（非必填，默认为应用更新）
